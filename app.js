@@ -8,6 +8,7 @@ let canvasPosition = canvas.getBoundingClientRect();
 let score = 0;
 let timeFrame = 0;
 
+//track movement
 const move = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -56,7 +57,7 @@ coinImg.src = 'coin.png'
 const background = new Image();
 background.src = 'sky_background_green_hills.png'
 
-//Player class
+//Player stuff
 class Player {
     constructor() {
         this.x = canvas.width;
@@ -189,9 +190,7 @@ class Enemy {
             const dyBullet = this.y - bullet.y;
             this.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
         })
-
     }
-
     draw() {
         context.fillStyle = 'red';
         context.beginPath();
@@ -220,7 +219,8 @@ function handleEnemy() {
                     score = 0;
             }
         }
-        bullets.forEach(bullet =>{
+        //check for collison with bullet
+        bullets.forEach(bullet => {
             if (i.distancebullet < i.radius + bullet.radius) {
                 enemyArray.splice(i, 1);
                 console.log("hit");
