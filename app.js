@@ -45,6 +45,14 @@ playerLeft.src = 'plane_2_blue_left.png';
 const playerRight = new Image();
 playerRight.src = 'plane_2_blue_right.png';
 
+// enemy image
+const enemyImg = new Image();
+enemyImg.src = 'plane_2_red.png';
+
+// coin image
+const coinImg = new Image();
+coinImg.src = 'coin.png'
+
 //Player class
 class Player {
     constructor() {
@@ -103,10 +111,12 @@ class Coin {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = canvas.height + 100 + Math.random() * canvas.height;
-        this.radius = 50;
+        this.radius = 30;
         this.speed = Math.random() * 5 + 1;
         this.distance;
         this.counted = false;
+        this.imgWidth = 350;
+        this.imgHeight = 300;
     }
     update() {
         this.y -= this.speed;
@@ -119,9 +129,7 @@ class Coin {
         context.fillStyle = 'blue';
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
-        context.closePath();
+        context.drawImage(coinImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 40, this.y - 35, this.imgWidth / 4, this.imgHeight / 3);
     }
 }
 
@@ -157,9 +165,11 @@ class Enemy {
     constructor() {
         this.x = canvas.width - 100 + Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.radius = 50;
+        this.radius = 40;
         this.speed = Math.random() * 5 + 1;
         this.distance;
+        this.imgWidth = 550;
+        this.imgHeight = 500;
     }
 
     update() {
@@ -170,9 +180,7 @@ class Enemy {
         context.fillStyle = 'red';
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
-        context.closePath();
+        context.drawImage(enemyImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 70, this.y - 50, this.imgWidth / 4, this.imgHeight / 3);
     }
 }
 
