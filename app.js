@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 canvas.width = 800;
-canvas.height = 500;
+canvas.height = 350;
 
 let canvasPosition = canvas.getBoundingClientRect();
 
@@ -20,8 +20,7 @@ const bullets = [];
 //touch events
 canvas.addEventListener("touchstart", function (event) {
     event.preventDefault();
-    // canvas height offset????
-    const angle = Math.atan2((event.touches[0].clientY - 290) - move.y, event.touches[0].clientX - move.x);
+    const angle = Math.atan2((event.touches[0].clientY) - move.y, event.touches[0].clientX - move.x);
     const speed = {
         x: Math.cos(angle),
         y: Math.sin(angle)
@@ -62,7 +61,7 @@ class Player {
     constructor() {
         this.x = canvas.width;
         this.y = canvas.height / 2;
-        this.radius = 40;
+        this.radius = 30;
         this.angle = 0;
         this.imgWidth = 550;
         this.imgHeight = 500;
@@ -117,7 +116,7 @@ class Coin {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = canvas.height + 100 + Math.random() * canvas.height;
-        this.radius = 30;
+        this.radius = 20;
         this.speed = Math.random() * 5 + 1;
         this.distance;
         this.counted = false;
@@ -172,7 +171,7 @@ class Enemy {
     constructor() {
         this.x = canvas.width - 100 + Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.radius = 40;
+        this.radius = 30;
         this.speed = Math.random() * 10 + 1;
         this.distance;
         this.distancebullet;
@@ -185,11 +184,6 @@ class Enemy {
         const dx = this.x - player.x;
         const dy = this.y - player.y;
         this.distance = Math.sqrt(dx * dx + dy * dy);
-        bullets.forEach(bullet => {
-            const dxBullet = this.x - bullet.x;
-            const dyBullet = this.y - bullet.y;
-            this.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
-        })
     }
     draw() {
         context.fillStyle = 'red';
@@ -200,9 +194,22 @@ class Enemy {
 }
 
 function handleEnemy() {
-    if (timeFrame % 150 == 0) {
-        enemyArray.push(new Enemy());
+    if(score < 5){
+        if (timeFrame % 150 == 0) {
+            enemyArray.push(new Enemy());
+        }
     }
+    else if (6 < score >= 10){
+        if (timeFrame % 100 == 0) {
+            enemyArray.push(new Enemy());
+        }
+    }
+    else {
+        if (timeFrame % 50 == 0) {
+            enemyArray.push(new Enemy());
+        }
+    }
+
     enemyArray.forEach(i => {
         i.update();
         i.draw();
@@ -221,9 +228,11 @@ function handleEnemy() {
         }
         //check for collison with bullet
         bullets.forEach(bullet => {
+            const dxBullet = i.x - bullet.x;
+            const dyBullet = i.y - bullet.y;
+            i.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
             if (i.distancebullet < i.radius + bullet.radius) {
                 enemyArray.splice(i, 1);
-                console.log("hit");
             }
         })
     })

@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    overflow: hidden;
 }
 body{
     width: 100vw;
@@ -12,6 +13,6 @@ body{
 }
 #canvas{
     width: 800px;
-    height: 500px;
+    height: 370px;
     border: 4px solid black;
 }
