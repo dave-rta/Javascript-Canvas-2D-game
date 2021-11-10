@@ -20,12 +20,15 @@ const bullets = [];
 //touch events
 canvas.addEventListener("touchstart", function (event) {
     event.preventDefault();
-    const angle = Math.atan2((event.touches[0].clientY) - move.y, event.touches[0].clientX - move.x);
-    const speed = {
-        x: Math.cos(angle),
-        y: Math.sin(angle)
+    for (let i = 1; i <= event.touches.length; i++) {
+        const angle = Math.atan2((event.touches[i].clientY) - move.y, event.touches[i].clientX - move.x);
+        const speed = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
+        bullets.push(new Bullet({ x: speed.x * 10, y: speed.y * 10 }));
     }
-    bullets.push(new Bullet({ x: speed.x * 10, y: speed.y * 10 }));
+
 }, false);
 canvas.addEventListener('touchmove', function (event) {
     event.preventDefault();
@@ -61,7 +64,7 @@ class Player {
     constructor() {
         this.x = canvas.width;
         this.y = canvas.height / 2;
-        this.radius = 30;
+        this.radius = 25;
         this.angle = 0;
         this.imgWidth = 550;
         this.imgHeight = 500;
@@ -72,22 +75,15 @@ class Player {
         const dy = this.y - move.y;
         // angle to face tap direction
         this.angle = Math.atan2(dy, dx);
-
         if (move.x != this.x) {
             this.x -= dx / 30;
         }
         if (move.y != this.y) {
             this.y -= dy / 30;
         }
+
     }
     draw() {
-        if (move.tap) {
-            context.lineWidth = 0.2;
-            context.beginPath();
-            context.moveTo(this.x, this.y);
-            context.lineTo(move.x, move.y);
-            context.stroke();
-        }
         //"Hit-box"
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -98,10 +94,10 @@ class Player {
         context.rotate(this.angle);
         if (this.x > move.x) {
             //check if correct (img, next 4 area of pic, last 4 dest of image)
-            context.drawImage(playerLeft, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 70, 0 - 50, this.imgWidth / 4, this.imgHeight / 3);
+            context.drawImage(playerLeft, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 60, 0 - 40, this.imgWidth / 4, this.imgHeight / 3);
         } else {
             //check if correct (img, next 4 area of pic, last 4 dest of image)
-            context.drawImage(playerRight, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 70, 0 - 50, this.imgWidth / 4, this.imgHeight / 3);
+            context.drawImage(playerRight, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 60, 0 - 30, this.imgWidth / 4, this.imgHeight / 3);
         }
         context.restore();
     }
@@ -171,7 +167,7 @@ class Enemy {
     constructor() {
         this.x = canvas.width - 100 + Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.radius = 30;
+        this.radius = 25;
         this.speed = Math.random() * 10 + 1;
         this.distance;
         this.distancebullet;
@@ -189,17 +185,17 @@ class Enemy {
         context.fillStyle = 'red';
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.drawImage(enemyImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 70, this.y - 50, this.imgWidth / 4, this.imgHeight / 3);
+        context.drawImage(enemyImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 60, this.y - 40, this.imgWidth / 4, this.imgHeight / 3);
     }
 }
 
 function handleEnemy() {
-    if(score < 5){
+    if (score < 5) {
         if (timeFrame % 150 == 0) {
             enemyArray.push(new Enemy());
         }
     }
-    else if (6 < score >= 10){
+    else if (6 < score >= 10) {
         if (timeFrame % 100 == 0) {
             enemyArray.push(new Enemy());
         }
@@ -243,7 +239,7 @@ class Bullet {
     constructor(speed) {
         this.x = move.x;
         this.y = move.y;
-        this.radius = 10;
+        this.radius = 5;
         this.angle = 0;
         this.speed = speed;
         this.imgWidth = 250;
