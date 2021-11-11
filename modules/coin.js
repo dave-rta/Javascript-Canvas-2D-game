@@ -1,6 +1,6 @@
 // coin image
 const coinImg = new Image();
-coinImg.src = 'coin.png'
+coinImg.src = 'Images/coin.png'
 
 //coin stuff
 export class Coin {

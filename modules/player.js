@@ -1,8 +1,8 @@
 //Player Images
 const playerLeft = new Image();
-playerLeft.src = 'plane_2_blue_left.png';
+playerLeft.src = 'Images/plane_2_blue_left.png';
 const playerRight = new Image();
-playerRight.src = 'plane_2_blue_right.png';
+playerRight.src = 'Images/plane_2_blue_right.png';
 
 //Player stuff
 export class Player {

@@ -1,6 +1,6 @@
 // enemy image
 const enemyImg = new Image();
-enemyImg.src = 'plane_2_red.png';
+enemyImg.src = 'Images/plane_2_red.png';
 
 export class Enemy {
     constructor() {

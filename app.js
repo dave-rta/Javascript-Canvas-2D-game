@@ -51,13 +51,13 @@ canvas.addEventListener('touchend', function (event) {
 
 //background image
 const background = new Image();
-background.src = 'sky_background_green_hills.png'
+background.src = 'Images/sky_background_green_hills.png'
 
 // create player
 var player = new Player();
 
 function handleCoin() {
-    if (timeFrame % 10 == 0) {
+    if (timeFrame % 10 == 0) {      //change back later
         coinArray.push(new Coin());
     }
     coinArray.forEach(coin => {
