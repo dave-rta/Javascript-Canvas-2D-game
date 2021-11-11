@@ -6,9 +6,9 @@ playerRight.src = 'plane_2_blue_right.png';
 
 //Player stuff
 export class Player {
-    constructor(width, height) {
-        this.x = width;
-        this.y = height / 2;
+    constructor() {
+        this.x = canvas.width;
+        this.y = canvas.height / 2;
         this.radius = 25;
         this.angle = 0;
         this.imgWidth = 550;
@@ -32,7 +32,6 @@ export class Player {
         //"Hit-box"
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fill();
 
         //rotate image to face movement
         context.save();

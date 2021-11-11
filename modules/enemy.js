@@ -23,7 +23,6 @@ export class Enemy {
     draw(context) {
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fill();
         context.drawImage(enemyImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 60, this.y - 40, this.imgWidth / 4, this.imgHeight / 3);
     }
 }

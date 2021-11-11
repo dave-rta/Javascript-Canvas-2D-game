@@ -11,6 +11,7 @@ let canvasPosition = canvas.getBoundingClientRect();
 
 let score = 0;
 let timeFrame = 0;
+let level = 0;
 
 const coinArray = [];
 const enemyArray = [];
@@ -53,29 +54,30 @@ const background = new Image();
 background.src = 'sky_background_green_hills.png'
 
 // create player
-var player = new Player(canvas.width, canvas.height);
+var player = new Player();
 
 function handleCoin() {
-    if (timeFrame % 100 == 0) {
-        const test = new Coin();
-        coinArray.push(test);
+    if (timeFrame % 10 == 0) {
+        coinArray.push(new Coin());
     }
-    coinArray.forEach(i => {
-        i.update(player.x, player.y);
-        i.draw(context);
-        //remove coin if out of bounds
-        if (i.x < 0 - i.radius * 2) {
+    coinArray.forEach(coin => {
+        coin.update(player.x, player.y);
+        coin.draw(context);
+        //splice coin if out of bounds
+        if (coin.x < 0 - coin.radius * 2) {
             setTimeout(() => {
-                coinArray.splice(1, i);
+                coinArray.splice(coin, 1);
             })
         }
         // take obj out of array and increase score
-        if (i) {
-            if (i.distance < i.radius + player.radius) {
-                if (!i.counted)
+        if (coin) {
+            if (coin.distance < coin.radius + player.radius) {
+                if (!coin.counted)
                     score += 1;
-                i.counted = true;
-                coinArray.splice(i, 1);
+                coin.counted = true;
+                setTimeout(() => {
+                    coinArray.splice(coin, 1);
+                })
             }
         }
     });
@@ -83,45 +85,48 @@ function handleCoin() {
 
 //enemy stuff
 function handleEnemy() {
-    if (score < 5) {
+    if (score <= 5) {
         if (timeFrame % 150 == 0) {
             enemyArray.push(new Enemy());
+            level = 1;
         }
     }
-    else if (6 < score >= 10) {
+    else if (5 < score && score <= 15) {
+        level = 2;
         if (timeFrame % 100 == 0) {
             enemyArray.push(new Enemy());
         }
     }
-    else {
+    else if (score > 15) {
+        level = 3;
         if (timeFrame % 50 == 0) {
             enemyArray.push(new Enemy());
         }
     }
 
-    enemyArray.forEach(i => {
-        i.update(player.x, player.y);
-        i.draw(context);
-        // remove enemy if out of bounds
-        if (i.y < 0 - i.radius * 2) {
+    enemyArray.forEach(enemy => {
+        enemy.update(player.x, player.y);
+        enemy.draw(context);
+        // splice enemy if out of bounds
+        if (enemy.y < 0 - enemy.radius * 2) {
             setTimeout(() => {
-                enemyArray.splice(y, 1);
+                enemyArray.splice(enemy, 1);
             })
         }
         // check for collison with player
-        if (i) {
-            if (i.distance < i.radius + player.radius) {
-                if (!i.counted)
+        if (enemy) {
+            if (enemy.distance < enemy.radius + player.radius) {
+                if (!enemy.counted)
                     score = 0;
             }
         }
         //check for collison with bullet
         bullets.forEach(bullet => {
-            const dxBullet = i.x - bullet.x;
-            const dyBullet = i.y - bullet.y;
-            i.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
-            if (i.distancebullet < i.radius + bullet.radius) {
-                enemyArray.splice(i, 1);
+            const dxBullet = enemy.x - bullet.x;
+            const dyBullet = enemy.y - bullet.y;
+            enemy.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
+            if (enemy.distancebullet < enemy.radius + bullet.radius) {
+                enemyArray.splice(enemy, 1);
             }
         })
     })
@@ -138,7 +143,10 @@ function animate() {
         bullet.draw(context);
     })
     context.fillStyle = 'black';
-    context.fillText('Score: ' + score, 5, 15);
+    context.font = "15px Arial";
+    context.fillText('Score: ' + score, 5, 20);
+    context.fillText('Level ' + level, canvas.width / 2 - 20, 20);
+
     timeFrame++;
     requestAnimationFrame(animate);
 }
