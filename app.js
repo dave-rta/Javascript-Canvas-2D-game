@@ -1,3 +1,7 @@
+import { Player } from "./modules/player.js";
+import { Enemy } from "./modules/enemy.js"
+import { Coin } from "./modules/coin.js"
+import { Bullet } from "./modules/bullet.js"
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 canvas.width = 800;
@@ -8,14 +12,16 @@ let canvasPosition = canvas.getBoundingClientRect();
 let score = 0;
 let timeFrame = 0;
 
+const coinArray = [];
+const enemyArray = [];
+const bullets = [];
+
 //track movement
 const move = {
     x: canvas.width / 2,
     y: canvas.height / 2,
     tap: false
 }
-
-const bullets = [];
 
 //touch events
 canvas.addEventListener("touchstart", function (event) {
@@ -26,7 +32,7 @@ canvas.addEventListener("touchstart", function (event) {
             x: Math.cos(angle),
             y: Math.sin(angle)
         }
-        bullets.push(new Bullet({ x: speed.x * 10, y: speed.y * 10 }));
+        bullets.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }));
     }
 
 }, false);
@@ -35,104 +41,19 @@ canvas.addEventListener('touchmove', function (event) {
     move.tap = true;
     move.x = event.touches[0].clientX - canvasPosition.left;
     move.y = event.touches[0].clientY - canvasPosition.top;
+
 }, false)
 canvas.addEventListener('touchend', function (event) {
     event.preventDefault();
     move.tap = false;
 })
 
-//Player Images
-const playerLeft = new Image();
-playerLeft.src = 'plane_2_blue_left.png';
-const playerRight = new Image();
-playerRight.src = 'plane_2_blue_right.png';
-
-// enemy image
-const enemyImg = new Image();
-enemyImg.src = 'plane_2_red.png';
-
-// coin image
-const coinImg = new Image();
-coinImg.src = 'coin.png'
-
 //background image
 const background = new Image();
 background.src = 'sky_background_green_hills.png'
 
-//Player stuff
-class Player {
-    constructor() {
-        this.x = canvas.width;
-        this.y = canvas.height / 2;
-        this.radius = 25;
-        this.angle = 0;
-        this.imgWidth = 550;
-        this.imgHeight = 500;
-    }
-
-    update() {
-        const dx = this.x - move.x;
-        const dy = this.y - move.y;
-        // angle to face tap direction
-        this.angle = Math.atan2(dy, dx);
-        if (move.x != this.x) {
-            this.x -= dx / 30;
-        }
-        if (move.y != this.y) {
-            this.y -= dy / 30;
-        }
-
-    }
-    draw() {
-        //"Hit-box"
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-
-        //rotate image to face movement
-        context.save();
-        context.translate(this.x, this.y);
-        context.rotate(this.angle);
-        if (this.x > move.x) {
-            //check if correct (img, next 4 area of pic, last 4 dest of image)
-            context.drawImage(playerLeft, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 60, 0 - 40, this.imgWidth / 4, this.imgHeight / 3);
-        } else {
-            //check if correct (img, next 4 area of pic, last 4 dest of image)
-            context.drawImage(playerRight, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, 0 - 60, 0 - 30, this.imgWidth / 4, this.imgHeight / 3);
-        }
-        context.restore();
-    }
-}
-
 // create player
-const player = new Player();
-
-//coin stuff
-const coinArray = [];
-class Coin {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 100 + Math.random() * canvas.height;
-        this.radius = 20;
-        this.speed = Math.random() * 5 + 1;
-        this.distance;
-        this.counted = false;
-        this.imgWidth = 350;
-        this.imgHeight = 300;
-    }
-    update() {
-        this.y -= this.speed;
-        const dx = this.x - player.x;
-        const dy = this.y - player.y;
-        this.distance = Math.sqrt(dx * dx + dy * dy);
-    }
-
-    draw() {
-        context.fillStyle = 'blue';
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.drawImage(coinImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 40, this.y - 35, this.imgWidth / 4, this.imgHeight / 3);
-    }
-}
+var player = new Player(canvas.width, canvas.height);
 
 function handleCoin() {
     if (timeFrame % 100 == 0) {
@@ -140,8 +61,8 @@ function handleCoin() {
         coinArray.push(test);
     }
     coinArray.forEach(i => {
-        i.update();
-        i.draw();
+        i.update(player.x, player.y);
+        i.draw(context);
         //remove coin if out of bounds
         if (i.x < 0 - i.radius * 2) {
             setTimeout(() => {
@@ -158,37 +79,9 @@ function handleCoin() {
             }
         }
     });
-
 }
 
 //enemy stuff
-const enemyArray = [];
-class Enemy {
-    constructor() {
-        this.x = canvas.width - 100 + Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.radius = 25;
-        this.speed = Math.random() * 10 + 1;
-        this.distance;
-        this.distancebullet;
-        this.imgWidth = 550;
-        this.imgHeight = 500;
-    }
-
-    update() {
-        this.x -= this.speed;
-        const dx = this.x - player.x;
-        const dy = this.y - player.y;
-        this.distance = Math.sqrt(dx * dx + dy * dy);
-    }
-    draw() {
-        context.fillStyle = 'red';
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.drawImage(enemyImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 60, this.y - 40, this.imgWidth / 4, this.imgHeight / 3);
-    }
-}
-
 function handleEnemy() {
     if (score < 5) {
         if (timeFrame % 150 == 0) {
@@ -207,8 +100,8 @@ function handleEnemy() {
     }
 
     enemyArray.forEach(i => {
-        i.update();
-        i.draw();
+        i.update(player.x, player.y);
+        i.draw(context);
         // remove enemy if out of bounds
         if (i.y < 0 - i.radius * 2) {
             setTimeout(() => {
@@ -234,44 +127,15 @@ function handleEnemy() {
     })
 }
 
-// bullets
-class Bullet {
-    constructor(speed) {
-        this.x = move.x;
-        this.y = move.y;
-        this.radius = 5;
-        this.angle = 0;
-        this.speed = speed;
-        this.imgWidth = 250;
-        this.imgHeight = 200;
-    }
-    update() {
-        const dx = this.x - this.speed.x;
-        const dy = this.y - this.speed.y;
-        // angle to face tap direction
-        this.angle = Math.atan2(dx, dy);
-        this.x += this.speed.x;
-        this.y += this.speed.y;
-    }
-    draw() {
-        context.fillStyle = 'darkgrey';
-        context.beginPath();
-        context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        context.fill()
-        context.closePath();
-    }
-}
-
-
 function animate() {
     context.drawImage(background, 0, 0, canvas.width, canvas.height);
     handleCoin();
     handleEnemy();
-    player.update();
-    player.draw();
+    player.update(move.x, move.y);
+    player.draw(context, move.x);
     bullets.forEach((bullet) => {
         bullet.update();
-        bullet.draw();
+        bullet.draw(context);
     })
     context.fillStyle = 'black';
     context.fillText('Score: ' + score, 5, 15);
