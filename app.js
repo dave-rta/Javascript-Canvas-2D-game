@@ -137,10 +137,12 @@ function handleEnemy() {
             enemy.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
             if (enemy.distancebullet < enemy.radius + bullet.radius) {
                 enemy.removable = true;
+                bullet.removable = true;
             }
         })
     });
     removeEnemy();
+    removeBullet();
 }
 
 function removeEnemy() {
@@ -148,6 +150,16 @@ function removeEnemy() {
         if (enemyArray[i].removable) {
             setTimeout(() => {
                 enemyArray.splice(i, 1);
+            })
+        }
+    }
+}
+
+function removeBullet(){
+    for (let i = 0; i < bullets.length; i++) {
+        if (bullets[i].removable) {
+            setTimeout(() => {
+                bullets.splice(i, 1);
             })
         }
     }

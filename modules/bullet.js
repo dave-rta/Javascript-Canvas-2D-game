@@ -8,6 +8,7 @@ export class Bullet {
         this.speed = speed;
         this.imgWidth = 250;
         this.imgHeight = 200;
+        this.removalbe = false;
     }
     update() {
         const dx = this.x - this.speed.x;
