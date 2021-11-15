@@ -13,6 +13,7 @@ export class Coin {
         this.counted = false;
         this.imgWidth = 350;
         this.imgHeight = 300;
+        this.removable = false;
     }
     update(playerx, playery) {
         this.y -= this.speed;

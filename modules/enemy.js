@@ -12,6 +12,7 @@ export class Enemy {
         this.distancebullet;
         this.imgWidth = 550;
         this.imgHeight = 500;
+        this.removable = false;
     }
 
     update(playerx, playery) {

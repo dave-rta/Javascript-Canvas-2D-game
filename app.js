@@ -2,6 +2,7 @@ import { Player } from "./modules/player.js";
 import { Enemy } from "./modules/enemy.js"
 import { Coin } from "./modules/coin.js"
 import { Bullet } from "./modules/bullet.js"
+import { Restart } from "./modules/restart.js";
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 canvas.width = 800;
@@ -12,10 +13,11 @@ let canvasPosition = canvas.getBoundingClientRect();
 let score = 0;
 let timeFrame = 0;
 let level = 0;
+let gameOver = false;
 
-const coinArray = [];
-const enemyArray = [];
-const bullets = [];
+let coinArray = [];
+let enemyArray = [];
+let bullets = [];
 
 //track movement
 const move = {
@@ -27,14 +29,15 @@ const move = {
 //touch events
 canvas.addEventListener("touchstart", function (event) {
     event.preventDefault();
-    for (let i = 1; i <= event.touches.length; i++) {
-        const angle = Math.atan2((event.touches[i].clientY) - move.y, event.touches[i].clientX - move.x);
-        const speed = {
-            x: Math.cos(angle),
-            y: Math.sin(angle)
-        }
-        bullets.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }));
+    if (gameOver) {
+        checkForRestart(event.touches[0].clientX - canvasPosition.left, event.touches[0].clientY - canvasPosition.top);
     }
+    const angle = Math.atan2((event.touches[1].clientY) - move.y, event.touches[1].clientX - move.x);
+    const speed = {
+        x: Math.cos(angle),
+        y: Math.sin(angle)
+    }
+    bullets.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }));
 
 }, false);
 canvas.addEventListener('touchmove', function (event) {
@@ -55,9 +58,10 @@ background.src = 'Images/sky_background_green_hills.png'
 
 // create player
 var player = new Player();
+var restart = new Restart();
 
 function handleCoin() {
-    if (timeFrame % 10 == 0) {      //change back later
+    if (timeFrame % 100 == 0) {      //change back later
         coinArray.push(new Coin());
     }
     coinArray.forEach(coin => {
@@ -65,9 +69,7 @@ function handleCoin() {
         coin.draw(context);
         //splice coin if out of bounds
         if (coin.x < 0 - coin.radius * 2) {
-            setTimeout(() => {
-                coinArray.splice(coin, 1);
-            })
+            coin.removable = true;
         }
         // take obj out of array and increase score
         if (coin) {
@@ -75,12 +77,21 @@ function handleCoin() {
                 if (!coin.counted)
                     score += 1;
                 coin.counted = true;
-                setTimeout(() => {
-                    coinArray.splice(coin, 1);
-                })
+                coin.removable = true;
             }
         }
     });
+    removeCoins();
+}
+
+function removeCoins() {
+    for (let i = 0; i < coinArray.length; i++) {
+        if (coinArray[i].removable) {
+            setTimeout(() => {
+                coinArray.splice(i, 1);
+            })
+        }
+    }
 }
 
 //enemy stuff
@@ -109,15 +120,14 @@ function handleEnemy() {
         enemy.draw(context);
         // splice enemy if out of bounds
         if (enemy.y < 0 - enemy.radius * 2) {
-            setTimeout(() => {
-                enemyArray.splice(enemy, 1);
-            })
+            enemy.removable = true;
         }
         // check for collison with player
         if (enemy) {
             if (enemy.distance < enemy.radius + player.radius) {
                 if (!enemy.counted)
                     score = 0;
+                gameOver = true;
             }
         }
         //check for collison with bullet
@@ -126,28 +136,57 @@ function handleEnemy() {
             const dyBullet = enemy.y - bullet.y;
             enemy.distancebullet = Math.sqrt(dxBullet * dxBullet + dyBullet * dyBullet);
             if (enemy.distancebullet < enemy.radius + bullet.radius) {
-                enemyArray.splice(enemy, 1);
+                enemy.removable = true;
             }
         })
-    })
+    });
+    removeEnemy();
+}
+
+function removeEnemy() {
+    for (let i = 0; i < enemyArray.length; i++) {
+        if (enemyArray[i].removable) {
+            setTimeout(() => {
+                enemyArray.splice(i, 1);
+            })
+        }
+    }
+}
+
+function checkForRestart(x, y) {
+    if (Math.sqrt((restart.x - x) * (restart.x - x) + (restart.y - y) * (restart.y - y)) < restart.radius) {
+        gameOver = false;
+        score = 0;
+        level = 1;
+        player.x = canvas.width;
+        player.y = canvas.height / 2;
+        coinArray = [];
+        enemyArray = [];
+        bullets = [];
+    }
 }
 
 function animate() {
-    context.drawImage(background, 0, 0, canvas.width, canvas.height);
-    handleCoin();
-    handleEnemy();
-    player.update(move.x, move.y);
-    player.draw(context, move.x);
-    bullets.forEach((bullet) => {
-        bullet.update();
-        bullet.draw(context);
-    })
-    context.fillStyle = 'black';
-    context.font = "15px Arial";
-    context.fillText('Score: ' + score, 5, 20);
-    context.fillText('Level ' + level, canvas.width / 2 - 20, 20);
+    if (!gameOver) {
+        context.drawImage(background, 0, 0, canvas.width, canvas.height);
+        handleCoin();
+        handleEnemy();
+        player.update(move.x, move.y);
+        player.draw(context, move.x);
+        bullets.forEach((bullet) => {
+            bullet.update();
+            bullet.draw(context);
+        })
+        context.fillStyle = 'black';
+        context.font = "15px Arial";
+        context.fillText('Score: ' + score, 5, 20);
+        context.fillText('Level ' + level, canvas.width / 2 - 20, 20);
 
-    timeFrame++;
+        timeFrame++;
+    } else {
+        context.drawImage(background, 0, 0, canvas.width, canvas.height);
+        restart.draw(context, score);
+    }
     requestAnimationFrame(animate);
 }
 
