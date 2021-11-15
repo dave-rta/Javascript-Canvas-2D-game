@@ -11,6 +11,7 @@ canvas.height = 350;
 let canvasPosition = canvas.getBoundingClientRect();
 
 let score = 0;
+let oldScore = 0;
 let timeFrame = 0;
 let level = 0;
 let gameOver = false;
@@ -125,9 +126,11 @@ function handleEnemy() {
         // check for collison with player
         if (enemy) {
             if (enemy.distance < enemy.radius + player.radius) {
-                if (!enemy.counted)
+                if (!enemy.counted){
+                    oldScore = score;
                     score = 0;
-                gameOver = true;
+                    gameOver = true;
+                }
             }
         }
         //check for collison with bullet
@@ -155,7 +158,7 @@ function removeEnemy() {
     }
 }
 
-function removeBullet(){
+function removeBullet() {
     for (let i = 0; i < bullets.length; i++) {
         if (bullets[i].removable) {
             setTimeout(() => {
@@ -168,8 +171,8 @@ function removeBullet(){
 function checkForRestart(x, y) {
     if (Math.sqrt((restart.x - x) * (restart.x - x) + (restart.y - y) * (restart.y - y)) < restart.radius) {
         gameOver = false;
-        score = 0;
         level = 1;
+        score = 0;
         player.x = canvas.width;
         player.y = canvas.height / 2;
         coinArray = [];
@@ -197,7 +200,7 @@ function animate() {
         timeFrame++;
     } else {
         context.drawImage(background, 0, 0, canvas.width, canvas.height);
-        restart.draw(context, score);
+        restart.draw(context, oldScore);
     }
     requestAnimationFrame(animate);
 }
