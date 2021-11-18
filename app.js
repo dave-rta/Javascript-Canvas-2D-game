@@ -33,13 +33,18 @@ canvas.addEventListener("touchstart", function (event) {
     if (gameOver) {
         checkForRestart(event.touches[0].clientX - canvasPosition.left, event.touches[0].clientY - canvasPosition.top);
     }
-    const angle = Math.atan2((event.touches[1].clientY) - move.y, event.touches[1].clientX - move.x);
+    const angle = Math.atan2(event.touches[1].clientY - move.y, event.touches[1].clientX - move.x);
     const speed = {
         x: Math.cos(angle),
         y: Math.sin(angle)
     }
-    bullets.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }));
-
+    if (bullets.length < 5) {
+        bullets.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }, angle));
+    }else{
+        setTimeout(()=>{
+            bullets = []
+        },1500)
+    }
 }, false);
 canvas.addEventListener('touchmove', function (event) {
     event.preventDefault();
@@ -126,7 +131,7 @@ function handleEnemy() {
         // check for collison with player
         if (enemy) {
             if (enemy.distance < enemy.radius + player.radius) {
-                if (!enemy.counted){
+                if (!enemy.counted) {
                     oldScore = score;
                     score = 0;
                     gameOver = true;
@@ -158,7 +163,7 @@ function removeEnemy() {
     }
 }
 
-function removeBullet() {
+function removeBullet(){
     for (let i = 0; i < bullets.length; i++) {
         if (bullets[i].removable) {
             setTimeout(() => {
@@ -180,6 +185,7 @@ function checkForRestart(x, y) {
         bullets = [];
     }
 }
+
 
 function animate() {
     if (!gameOver) {
