@@ -39,9 +39,12 @@ canvas.addEventListener("touchstart", function (event) {
         x: Math.cos(angle),
         y: Math.sin(angle)
     }
-    if (bulletArray.length < 5) {
-        bulletArray.push(new Bullet(move.x, move.y, { x: speed.x * 10, y: speed.y * 10 }, angle));
-    } else {
+    // allow only 4 bullets
+    if (bulletArray.length < 4) {
+        bulletArray.push(new Bullet(move, { x: speed.x * 10, y: speed.y * 10 }, angle));
+    } 
+    // "reload bullets"
+    else {
         setTimeout(() => {
             bulletArray = []
         }, 1500)
@@ -58,7 +61,7 @@ canvas.addEventListener('touchmove', function (event) {
 canvas.addEventListener('touchend', function (event) {
     event.preventDefault();
     move.tap = false;
-},false)
+}, false)
 
 //background image
 const background = new Image();
@@ -70,7 +73,7 @@ var restart = new Restart();
 
 function handleCoin() {
     // spawn new coins
-    if (timeFrame % 100 == 0) { 
+    if (timeFrame % 100 == 0) {
         coinArray.push(new Coin());
     }
     //draw and update coin
@@ -103,21 +106,21 @@ function handleEnemy() {
             enemyArray.push(new Enemy(0));
         }
     }
-    else if (5 < score && score <= 15) {
+    else if (5 < score && score <= 20) {
         level = 2;
         if (timeFrame % 100 == 0) {
             enemyArray.push(new Enemy(0));
         }
     }
     // enemies from left start appearing
-    else if (15 < score && score <= 20) {
+    else if (20 < score && score <= 40) {
         level = 3;
         if (timeFrame % 150 == 0) {
             enemyArray.push(new Enemy(0));
             enemyArray.push(new Enemy(1));
         }
     }
-    else if (score > 20) {
+    else if (score > 40) {
         level = 4;
         if (timeFrame % 100 == 0) {
             enemyArray.push(new Enemy(0));
@@ -130,7 +133,7 @@ function handleEnemy() {
     removeFromArray(bulletArray);
 }
 
-function checkIfRemovable(array){
+function checkIfRemovable(array) {
     array.forEach(enemy => {
         enemy.update(player.x, player.y);
         enemy.draw(context);
@@ -188,7 +191,6 @@ function checkForRestart(x, y) {
     }
 }
 
-
 function animate() {
     // while playing
     if (!gameOver) {
@@ -196,8 +198,8 @@ function animate() {
         context.drawImage(background, 0, 0, canvas.width, canvas.height);
         handleCoin();
         handleEnemy();
-        player.update(move.x, move.y);
-        player.draw(context, move.x);
+        player.update(move);
+        player.draw(context, move);
         bulletArray.forEach((bullet) => {
             bullet.update();
             bullet.draw(context);
@@ -208,7 +210,7 @@ function animate() {
         context.fillText('Score: ' + score, 5, 20);
         context.fillText('Level ' + level, canvas.width / 2 - 20, 20);
         timeFrame++;
-    } 
+    }
     // restart stuff
     else {
         context.drawImage(background, 0, 0, canvas.width, canvas.height);

@@ -5,9 +5,9 @@ const bulletImgLeft = new Image();
 bulletImgLeft.src = 'Images/bulletLeft.png'
 
 export class Bullet {
-    constructor(movex, movey, speed, angle) {
-        this.x = movex;
-        this.y = movey;
+    constructor(move, speed, angle) {
+        this.x = move.x;
+        this.y = move.y;
         this.radius = 5;
         this.angle = 0;
         this.speed = speed;
