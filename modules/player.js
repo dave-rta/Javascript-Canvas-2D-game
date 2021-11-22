@@ -11,8 +11,8 @@ export class Player {
         this.y = canvas.height / 2;
         this.radius = 25;
         this.angle = 0;
-        this.imgWidth = 550;
-        this.imgHeight = 500;
+        this.imgWidth = 350;
+        this.imgHeight = 300;
     }
 
     update(move) {

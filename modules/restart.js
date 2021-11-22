@@ -2,11 +2,11 @@ const restartImg = new Image();
 restartImg.src = 'Images/circle.png';
 export class Restart {
     constructor() {
-        this.x = 400;
-        this.y = 175;
+        this.x = 300;
+        this.y = 150;
         this.radius = 50;
-        this.imgWidth = 550;
-        this.imgHeight = 500;
+        this.imgWidth = 450;
+        this.imgHeight = 400;
     }
 
     draw(context, score) {
@@ -15,7 +15,7 @@ export class Restart {
         context.beginPath();
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         context.drawImage(restartImg, 0 * this.imgWidth, 0 * this.imgWidth, this.imgHeight, this.imgWidth, this.x - 55, this.y - 45, this.imgWidth / 4, this.imgHeight / 3);
-        context.fillText('Restart', 377, 180)
+        context.fillText('Restart', 278, 155)
     }
 }
 

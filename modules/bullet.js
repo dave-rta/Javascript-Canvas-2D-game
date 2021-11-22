@@ -11,8 +11,8 @@ export class Bullet {
         this.radius = 5;
         this.angle = 0;
         this.speed = speed;
-        this.imgWidth = 250;
-        this.imgHeight = 200;
+        this.imgWidth = 100;
+        this.imgHeight = 50;
         this.removalbe = false;
         this.imgWidth = 350;
         this.imgHeight = 350;

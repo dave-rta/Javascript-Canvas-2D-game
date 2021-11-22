@@ -5,8 +5,8 @@ import { Bullet } from "./modules/bullet.js"
 import { Restart } from "./modules/restart.js";
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 350;
+canvas.width = 600;
+canvas.height = 300;
 
 let canvasPosition = canvas.getBoundingClientRect();
 
@@ -178,7 +178,7 @@ function removeFromArray(array) {
 // set game back to start conditions
 function checkForRestart(x, y) {
     // check if touch is in circle
-    if (Math.sqrt((restart.x - x) * (restart.x - x) + (restart.y - y) * (restart.y - y)) < restart.radius) {
+    if (Math.sqrt((restart.x - x + 40) * (restart.x - x + 40) + (restart.y - y + 20) * (restart.y - y + 20)) < restart.radius) {
         gameOver = false;
         level = 1;
         score = 0;

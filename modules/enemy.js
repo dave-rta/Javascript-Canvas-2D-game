@@ -18,8 +18,8 @@ export class Enemy {
         this.speed = Math.random() * 10 + 1;
         this.distance;
         this.distancebullet;
-        this.imgWidth = 550;
-        this.imgHeight = 500;
+        this.imgWidth = 350;
+        this.imgHeight = 300;
         this.removable = false;
         this.type = type;
     }
