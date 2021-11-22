@@ -4,7 +4,7 @@ export class Restart {
     constructor() {
         this.x = 300;
         this.y = 150;
-        this.radius = 50;
+        this.radius = 100;
         this.imgWidth = 450;
         this.imgHeight = 400;
     }
