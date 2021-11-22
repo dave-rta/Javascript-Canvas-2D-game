@@ -31,7 +31,7 @@ const move = {
 canvas.addEventListener("touchstart", function (event) {
     event.preventDefault();
     if (gameOver) {
-        checkForRestart(event.touches[0].clientX - canvasPosition.left, event.touches[0].clientY - canvasPosition.top);
+        checkForRestart(event.touches[0].clientX, event.touches[0].clientY);
     }
     // bullet direction, shooting only possible if plane is moving
     const angle = Math.atan2(event.touches[1].clientY - move.y, event.touches[1].clientX - move.x);
@@ -39,16 +39,8 @@ canvas.addEventListener("touchstart", function (event) {
         x: Math.cos(angle),
         y: Math.sin(angle)
     }
-    // allow only 4 bullets
-    if (bulletArray.length < 4) {
-        bulletArray.push(new Bullet(move, { x: speed.x * 10, y: speed.y * 10 }, angle));
-    }
-    // "reload bullets"
-    else {
-        setTimeout(() => {
-            bulletArray = []
-        }, 1500)
-    }
+
+    bulletArray.push(new Bullet(move, { x: speed.x * 10, y: speed.y * 10 }, angle));
 }, false);
 canvas.addEventListener('touchmove', function (event) {
     event.preventDefault();
