@@ -21,10 +21,10 @@ export class Player {
         // angle to face tap direction
         this.angle = Math.atan2(dy, dx);
         if (move.x != this.x) {
-            this.x -= dx / 30;
+            this.x -= dx / 20;
         }
         if (move.y != this.y) {
-            this.y -= dy / 30;
+            this.y -= dy / 20;
         }
 
     }
