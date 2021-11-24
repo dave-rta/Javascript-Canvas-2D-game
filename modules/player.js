@@ -21,12 +21,27 @@ export class Player {
         // angle to face tap direction
         this.angle = Math.atan2(dy, dx);
         if (move.x != this.x) {
-            this.x -= dx / 20;
+            if (this.x < 0 + this.radius) {
+                this.x += 1;
+            }
+            else if (this.x > 600 - this.radius) {
+                this.x -= 1;
+            }
+            else {
+                this.x -= dx / 20;
+            }
         }
         if (move.y != this.y) {
-            this.y -= dy / 20;
+            if (this.y < 0 + this.radius) {
+                this.y += 1;
+            }
+            else if (this.y > 300 - this.radius) {
+                this.y -= 1;
+            }
+            else {
+                this.y -= dy / 20;
+            }
         }
-
     }
     draw(context, move) {
         //"Hit-box"
